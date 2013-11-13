@@ -1,0 +1,50 @@
+\documentclass[a4paper,oneside]{article}
+
+%for code snippets
+\usepackage{minted}
+
+\author{Philip Hale}
+\title{CS4025/CS5057: Continuous Assessment 1 (Classifying Emotion)}
+
+\begin{document}
+
+\maketitle
+
+\section{Data partitioning}
+Source: p. 187 of S\&LP
+
+\begin{itemize}
+  \item 10 test set (to evaluate the performance of the algorithm)
+  \item 10 dev set (to fine-tune the algorithm during development)
+  \item 80 training set (to `teach' the algorithm).
+\end{itemize}
+
+Creating a dev set allows us to make adjustments to the algorithm while
+ensuring we do not bias towards the test data.
+
+\section{Testing}
+
+Comparison with existing implementation: http://classifier.rubyforge.org/
+
+\begin{listing}[H]
+\begin{minted}{ruby}
+classifier = Classifier::Bayes.new "Angry", "Fearful"
+
+# train
+File.open('angry.txt').each { |grr| classifier.train_angry grr }
+File.open('fearful.txt').each { |eek| classifier.train_fearful eek }
+
+# test
+classifier.classify "I hate you!"
+=> Angry
+classifier.classify "Please don't hurt me"
+=> Fearful
+\end{minted}
+\end{listing}
+
+
+
+
+
+
+\end{document}
