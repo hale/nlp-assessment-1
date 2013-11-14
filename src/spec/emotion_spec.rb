@@ -36,6 +36,10 @@ module EmotionClassifier
         end
       end
 
+      it "#== is true when emotions have the same name" do
+        Emotion.new(:a).should eq(Emotion.new(:a))
+      end
+
     end
   end
 end

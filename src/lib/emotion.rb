@@ -19,5 +19,9 @@ module EmotionClassifier
       File.readlines("#{name}_#{set}.txt")
     end
 
+    def ==(other)
+      name == other.name
+    end
+
   end
 end
