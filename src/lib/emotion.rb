@@ -4,7 +4,6 @@ module EmotionClassifier
 
     def initialize(name)
       @name = name
-      @sentences = load_sentences(name)
     end
 
     def to_s
@@ -15,10 +14,10 @@ module EmotionClassifier
       "Not #{name}"
     end
 
-    private
-
-    def load_sentences(name)
-      File.readlines("#{name}.txt")
+    def data(set: set)
+      raise Exception.new("Invalid set.") unless %i(test train dev).include? set
+      File.readlines("#{name}_#{set}.txt")
     end
+
   end
 end
