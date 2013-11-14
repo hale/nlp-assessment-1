@@ -1,4 +1,0 @@
-module EmotionClassifier
-  class Classifier
-  end
-end
