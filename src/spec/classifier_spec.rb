@@ -5,12 +5,14 @@ module EmotionClassifier
     describe Classifier do
       it "should classify known angry-text as angry" do
         classifier = Classifier.new
-        classifier.classify(text: 'dev_set_angry').should eq(:angry)
+        emotion = classifier.classify(sentence: "I hate you!")
+        emotion.should eq(Emotion.new(:angry))
       end
 
       xit "should classify known fearful-text as fearful" do
         classifier = Classifier.new
-        classifier.classify(text: 'dev_set_fearful').should eq(:fearful)
+        emotion = classifier.classify(sentence: "Please don't hurt me.")
+        emotion.should eq(Emotion.new(:fearful))
       end
     end
   end

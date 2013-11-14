@@ -1,7 +1,7 @@
 module EmotionClassifier
   class Classifier
-    def classify(text: text)
-      :angry
+    def classify(sentence: sentence)
+      Emotion.new(:angry)
     end
   end
 end
