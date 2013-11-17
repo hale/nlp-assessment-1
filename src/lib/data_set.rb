@@ -6,16 +6,32 @@ module EmotionClassifier
     attr_reader :dev
     attr_reader :test
 
-    def initialize(sentiment)
-      data = File.readlines(make_path(sentiment)).shuffle
-      raise NoDataError.new(make_path(sentiment)) if data.empty?
+    def initialize(sentiments)
+      all_sentences = sentiments.each_with_object([]) do |sentiment, all|
+        all << sentences(sentiment)
+      end.flatten(1)
 
-      @train = data.first_percent(80)
-      @dev = (data - @train).first_percent(10)
-      @test = data - @train - @dev
+      @test = all_sentences.first_percent(10)
+      @dev = (all_sentences - @test).first_percent(10)
+      @train = (all_sentences - @dev - @test)
+    end
+
+    # don't expose the known-sentiment
+    def test
+      @test.map(&:first)
+    end
+
+    # don't expose the known-sentiment
+    def dev
+      @dev.map(&:first)
     end
 
     private
+
+    def sentences(sentiment)
+      filepath = make_path(sentiment)
+      File.readlines(filepath).map { |sentence| [sentence, sentiment] }
+    end
 
     def make_path(filename)
       "#{PATH}/#{filename}.txt"

@@ -6,9 +6,11 @@ module EmotionClassifier
     def initialize(sentiments: sentiments)
       sentiments.each_with_object([]) do |sentiment, emotions|
         (@emotions ||= []) << Emotion.new(sentiment)
-        (@data ||= {})[sentiment] = DataSet.new(sentiment)
       end
+
+      @data = DataSet.new(sentiments)
     end
+
 
     def classify(sentence: sentence)
       train

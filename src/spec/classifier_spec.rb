@@ -19,16 +19,16 @@ module EmotionClassifier
       describe "initialized with data" do
         let(:classifier) { Classifier.new(sentiments: [:example]) }
 
-        it "has a training set" do
-          classifier.data[:example].train.should_not be_nil
+        it "has a training set " do
+          classifier.data.train.should_not be_nil
         end
 
         it "has a dev-set of data to test against" do
-          classifier.data[:example].dev.should_not be_nil
+          classifier.data.dev.should_not be_nil
         end
 
         it "has a held-back set of test data" do
-          classifier.data[:example].test.should_not be_nil
+          classifier.data.test.should_not be_nil
         end
       end
 

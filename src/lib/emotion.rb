@@ -14,14 +14,8 @@ module EmotionClassifier
       "Not #{name}"
     end
 
-    def data(set: set)
-      raise Exception.new("Invalid set.") unless %i(test train dev).include? set
-      File.readlines("#{name}_#{set}.txt")
-    end
-
     def ==(other)
       name == other.name
     end
-
   end
 end
