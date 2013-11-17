@@ -3,7 +3,7 @@ require 'spec_helper'
 module EmotionClassifier
   class ClassifierSpec
     describe Classifier do
-      before(:each) { File.stub(:readlines => []) }
+      before(:each) { File.stub(:readlines => ["Test"]) }
 
       let(:classifier) { Classifier.new(sentiments: [:testable]) }
 
@@ -16,9 +16,20 @@ module EmotionClassifier
         classifier.emotions.should eq([Emotion.new(:example)])
       end
 
-      it "should have a training set of data" do
-        classifier = Classifier.new(sentiments: [:example])
-        classifier.data[:example].training.should_not be_nil
+      describe "initialized with data" do
+        let(:classifier) { Classifier.new(sentiments: [:example]) }
+
+        it "has a training set" do
+          classifier.data[:example].train.should_not be_nil
+        end
+
+        it "has a dev-set of data to test against" do
+          classifier.data[:example].dev.should_not be_nil
+        end
+
+        it "has a held-back set of test data" do
+          classifier.data[:example].test.should_not be_nil
+        end
       end
 
       it "#train should train the classifier" do
