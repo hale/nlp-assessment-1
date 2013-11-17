@@ -1,8 +1,12 @@
 module EmotionClassifier
   class Classifier
+    attr_reader :emotions
+    attr_reader :data
+
     def initialize(sentiments: sentiments)
-      @emotions = [].tap do |emotions|
-        sentiments.each { |sentiment| emotions << Emotion.new(:sentiment) }
+      sentiments.each_with_object([]) do |sentiment, emotions|
+        (@emotions ||= []) << Emotion.new(sentiment)
+        (@data ||= {})[sentiment] = DataSet.new(sentiment)
       end
     end
 

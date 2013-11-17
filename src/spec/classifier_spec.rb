@@ -3,10 +3,22 @@ require 'spec_helper'
 module EmotionClassifier
   class ClassifierSpec
     describe Classifier do
+      before(:each) { File.stub(:readlines => []) }
+
       let(:classifier) { Classifier.new(sentiments: [:testable]) }
 
       it "should be untrained by default" do
         classifier.trained?.should_not be_true
+      end
+
+      it "should be initialised with some emotions" do
+        classifier = Classifier.new(sentiments: [:example])
+        classifier.emotions.should eq([Emotion.new(:example)])
+      end
+
+      it "should have a training set of data" do
+        classifier = Classifier.new(sentiments: [:example])
+        classifier.data[:example].training.should_not be_nil
       end
 
       it "#train should train the classifier" do
