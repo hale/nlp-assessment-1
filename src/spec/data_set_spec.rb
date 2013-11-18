@@ -3,19 +3,45 @@ require_relative 'spec_helper'
 module EmotionClassifier
   class DataSetSpec
     describe DataSet do
-      it "splits the data into 80/10/10 for training/test/dev" do
-        sentiments = {
-          :red => %w{r1 r2 r3 r4 r5 r6 r7 r8 r9 r10},
-          :blue => %w{b1 b2 b3 b4 b5 b6 b7 b8 b9 b10},
-          :green => %w{g1 g2 g3 g4 g5 g6 g7 g8 g9 g10}
-        }
+      let(:sentiments) do
+        {:red => %w{r1 r2 r3 r4 r5 r6 r7 r8 r9 r10},
+         :green => %w{g1 g2 g3 g4 g5 g6 g7 g8 g9 g10},
+         :blue => %w{b1 b2 b3 b4 b5 b6 b7 b8 b9 b10} }
+      end
+
+      before(:each) do
         File.stub(:readlines).and_return(sentiments[:red], sentiments[:green], sentiments[:blue])
+      end
 
+      it "splits the data into 80/10/10 for training/test/dev" do
         data = DataSet.new(sentiments.keys)
-
         data.test.size.should eq(3)
         data.dev.size.should eq(3)
         data.train.size.should eq(24)
+      end
+
+      it "assigns a sentiment to each sentence" do
+        data = DataSet.new(sentiments.keys)
+        data.train.select{ |word, sentiment| sentiment == :green }
+          .map(&:first).should eq(sentiments[:green])
+      end
+
+      it "has a total word count equal to the training dataset size" do
+        data = DataSet.new(sentiments.keys)
+        data.word_counts[:all].should eq(24)
+      end
+
+      it "has wordcounts for each sentiment, which sum to the total wordcount" do
+        word_counts = DataSet.new(sentiments.keys).word_counts
+        word_counts[:red].should be > 0
+        word_counts[:green].should be > 0
+        word_counts[:blue].should be > 0
+        (word_counts[:red] + word_counts[:green] + word_counts[:blue]).should eq(24)
+      end
+
+      it "#count_in_context gives the number of times the given word appears in the given context" do
+        data = DataSet.new(sentiments.keys)
+        data.count_in_context(word: 'g2', sentiment: :green).should eq(1)
       end
     end
   end
