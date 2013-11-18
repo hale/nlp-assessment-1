@@ -3,48 +3,32 @@ module EmotionClassifier
     PATH = '../emotions'
 
     attr_reader :train
-    attr_reader :dev
-    attr_reader :test
-    attr_reader :all
-    attr_reader :word_counts
+    attr_reader :set
 
     def initialize(sentiments)
       @all = sentiments.each_with_object([]) do |sentiment, all|
-        sentiment_sentences = sentences(sentiment)
-        all << sentiment_sentences
+        all << sentences(sentiment)
       end.flatten(1)
-
 
       @test = @all.first_percent(10)
       @dev = (@all - @test).first_percent(10)
       @train = (@all - @dev - @test)
 
-      sentiments.each do |sentiment|
-        (@word_counts ||= {})[sentiment] = @train.select { |_,v| v == sentiment }.map(&:first).map(&:split).count
-      end
-      @word_counts[:all] = @word_counts.values.reduce(0, :+)
+      use_set(:all)
     end
 
-    def count_in_context(word: word, sentiment: sentiment)
-      @train.select{ |_, v| v == sentiment }.map(&:first).select { |w| w == word }.count
+    def use_set(set)
+      @set = case set
+             when :all then @all
+             when :test then @test
+             when :dev then @dev
+             when :train then @train
+             else raise StandardError.new("Invalid dataset name")
+             end
     end
 
-    # don't expose the known-sentiment
-    def test
-      @test.map(&:first)
-    end
-
-    # don't expose the known-sentiment
-    def dev
-      @dev.map(&:first)
-    end
-
-    def probability(word: word, sentiment: :all)
-      if sentiment == :all
-        @train.first.count(word) / @word_counts[:all]
-      else
-        @train.select { |_,v| v == sentiment }.count(word) / @word_counts[sentiment]
-      end
+    def with_sentiment(sentiment)
+      @set.select { |_, sentence_sentiment| sentence_sentiment == sentiment }
     end
 
     private
