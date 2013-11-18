@@ -20,9 +20,14 @@ module EmotionClassifier
         data.train.size.should eq(24)
       end
 
+      it "can give all the data" do
+        data = DataSet.new(sentiments.keys)
+        data.all.count.should eq(30)
+      end
+
       it "assigns a sentiment to each sentence" do
         data = DataSet.new(sentiments.keys)
-        data.train.select{ |word, sentiment| sentiment == :green }
+        data.all.select{ |word, sentiment| sentiment == :green }
           .map(&:first).should eq(sentiments[:green])
       end
 
@@ -42,6 +47,17 @@ module EmotionClassifier
       it "#count_in_context gives the number of times the given word appears in the given context" do
         data = DataSet.new(sentiments.keys)
         data.count_in_context(word: 'g2', sentiment: :green).should eq(1)
+      end
+
+      it "#probability with only word argument gives proportion of that word in the dataset" do
+        data = DataSet.new(sentiments.keys)
+        data.probability(word: 'g1').should eq(1/30)
+      end
+
+      it "#probability with word and sentiment arguments gives proportion of that word for that sentiment" do
+        data = DataSet.new(sentiments.keys)
+        data.probability(word: 'g1', sentiment: :green).should eq(1/30)
+        data.probability(word: 'g1', sentiment: :blue).should eq(0/30)
       end
     end
   end

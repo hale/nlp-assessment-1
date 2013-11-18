@@ -5,18 +5,19 @@ module EmotionClassifier
     attr_reader :train
     attr_reader :dev
     attr_reader :test
+    attr_reader :all
     attr_reader :word_counts
 
     def initialize(sentiments)
-      all_sentences = sentiments.each_with_object([]) do |sentiment, all|
+      @all = sentiments.each_with_object([]) do |sentiment, all|
         sentiment_sentences = sentences(sentiment)
         all << sentiment_sentences
       end.flatten(1)
 
 
-      @test = all_sentences.first_percent(10)
-      @dev = (all_sentences - @test).first_percent(10)
-      @train = (all_sentences - @dev - @test)
+      @test = @all.first_percent(10)
+      @dev = (@all - @test).first_percent(10)
+      @train = (@all - @dev - @test)
 
       sentiments.each do |sentiment|
         (@word_counts ||= {})[sentiment] = @train.select { |_,v| v == sentiment }.map(&:first).map(&:split).count
@@ -36,6 +37,14 @@ module EmotionClassifier
     # don't expose the known-sentiment
     def dev
       @dev.map(&:first)
+    end
+
+    def probability(word: word, sentiment: :all)
+      if sentiment == :all
+        @train.first.count(word) / @word_counts[:all]
+      else
+        @train.select { |_,v| v == sentiment }.count(word) / @word_counts[sentiment]
+      end
     end
 
     private
