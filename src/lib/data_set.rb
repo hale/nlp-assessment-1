@@ -1,5 +1,9 @@
+require 'memoist'
+
 module EmotionClassifier
   class DataSet
+    extend Memoist
+
     PATH = '../emotions'
 
     attr_reader :train
@@ -30,6 +34,7 @@ module EmotionClassifier
     def with_sentiment(sentiment)
       @set.select { |_, sentence_sentiment| sentence_sentiment == sentiment }
     end
+    memoize :with_sentiment
 
     def words(sentiment: :all)
       if sentiment == :all
@@ -43,7 +48,9 @@ module EmotionClassifier
 
     def sentences(sentiment)
       filepath = make_path(sentiment)
-      File.readlines(filepath).map { |sentence| [sentence, sentiment] }
+      File.readlines(filepath)
+        .map { |word| word.downcase.gsub(/[^[[:word:]]\s]/, '') }
+        .map { |sentence| [sentence, sentiment] }
     end
 
     def make_path(filename)

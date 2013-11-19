@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative '../spec_helper'
 
 module EmotionClassifier
   class ClassifierSpec
@@ -65,24 +65,14 @@ module EmotionClassifier
 
         it "#probability with only word argument gives proportion of that word in the dataset" do
           classifier.train
-          classifier.probability(word: '1').should eq(1/10)
+          classifier.probability(word: '1').should eq(0.1)
         end
 
         it "#probability with word and sentiment arguments gives proportion of that word for that sentiment" do
           classifier.train
-          classifier.probability(word: '1', sentiment: :green).should eq(1/30)
-          classifier.probability(word: '5', sentiment: :green).should eq(0/30)
+          classifier.probability(word: '1', sentiment: :green).should eq(0.1)
+          classifier.probability(word: '5', sentiment: :green).should eq(0.0)
         end
-      end
-
-      it "should classify known angry-text as angry" do
-        emotion = classifier.classify(sentence: "I hate you!")
-        emotion.should eq(Emotion.new(:angry))
-      end
-
-      xit "should classify known fearful-text as fearful" do
-        emotion = classifier.classify(sentence: "Please don't hurt me.")
-        emotion.should eq(Emotion.new(:fearful))
       end
     end
   end

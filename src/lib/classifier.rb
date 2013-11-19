@@ -1,4 +1,6 @@
 module EmotionClassifier
+  require 'bigdecimal'
+
   class Classifier
     attr_reader :sentiments
     attr_reader :data
@@ -13,13 +15,20 @@ module EmotionClassifier
 
     def classify(sentence: sentence)
       train
-      Emotion.new(:angry)
+      probs = sentiments.each_with_object({}) do |sentiment, p|
+        p[sentiment] = data.words(sentiment: sentiment).count.to_f / @data.words.count.to_f
+        sentence.downcase.split.each do |word|
+          prob = probability(word: word, sentiment: sentiment)
+          p[sentiment] *= prob if prob > 0
+        end
+      end
+      Emotion.new(probs.max_by { |sentiment, _| sentiment }.first )
     end
 
     def train
       @data.use_set(:train)
 
-      @individual_word_counts = @data.words.each_with_object({}) do |word, wc|
+      @individual_word_counts = @data.words.uniq.each_with_object({}) do |word, wc|
         wc[word] = @data.words.count(word)
       end
 
@@ -33,10 +42,12 @@ module EmotionClassifier
 
     def probability(word: word, sentiment: :all)
       if sentiment == :all
-        @individual_word_counts[word] / @sentiment_word_counts[:all]
+        @individual_word_counts[word].to_f / @sentiment_word_counts[:all].to_f
       else
-        @data.with_sentiment(sentiment).map(&:first).count(word) /
-          @sentiment_word_counts[sentiment]
+        word_count = @data.with_sentiment(sentiment).map(&:first).map(&:split).flatten.count(word)
+        #puts "word count for #{word} in #{sentiment}: #{word_count}"
+        sentiment_count = @sentiment_word_counts[sentiment].to_f
+        word_count / sentiment_count
       end
     end
 

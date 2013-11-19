@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 module EmotionClassifier
   class DataSetSpec
@@ -11,6 +11,12 @@ module EmotionClassifier
 
       before(:each) do
         File.stub(:readlines).and_return(sentiments[:red], sentiments[:green], sentiments[:blue])
+      end
+
+      it "#sentences strips the sentence of punctuation and downcases" do
+        File.stub(:readlines).and_return(['"My oh my", said Ronald\'s tiger!'])
+        data = DataSet.new([:test])
+        data.set.first.first.should eq("my oh my said ronalds tiger")
       end
 
       it "splits the data into 80/10/10 for training/test/dev" do
