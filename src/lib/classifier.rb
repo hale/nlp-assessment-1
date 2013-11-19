@@ -34,8 +34,6 @@ module EmotionClassifier
     end
 
     def probability(word: word, sentiment: :all)
-      data.use_set :train
-
       if sentiment == :all
         @individual_word_counts[word] / @sentiment_word_counts[:all]
       else
