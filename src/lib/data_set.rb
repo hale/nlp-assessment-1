@@ -31,6 +31,14 @@ module EmotionClassifier
       @set.select { |_, sentence_sentiment| sentence_sentiment == sentiment }
     end
 
+    def words(sentiment: :all)
+      if sentiment == :all
+        @set.map(&:first).flatten(1).map(&:split).flatten(1)
+      else
+        with_sentiment(sentiment).map(&:first).map(&:split).flatten
+      end
+    end
+
     private
 
     def sentences(sentiment)

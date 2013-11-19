@@ -36,6 +36,16 @@ module EmotionClassifier
         data = DataSet.new(sentiments.keys)
         data.with_sentiment(:green).map(&:first).should eq(sentiments[:green])
       end
+
+      it "#words gives an array with every word by default" do
+        data = DataSet.new(sentiments.keys)
+        data.words.should eq(sentiments.values.flatten)
+      end
+
+      it "#words with sentiment argument gives words in that sentiment" do
+        data = DataSet.new(sentiments.keys)
+        data.words(sentiment: :red).should eq(sentiments[:red])
+      end
     end
   end
 end

@@ -17,16 +17,14 @@ module EmotionClassifier
     end
 
     def train
-       @data.use_set(:train)
+      @data.use_set(:train)
 
-      all_words = @data.set.map(&:first).flatten(1).map(&:split).flatten(1)
-      @individual_word_counts = all_words.uniq.each_with_object({}) do |word, wc|
-        wc[word] = all_words.count(word)
+      @individual_word_counts = @data.words.each_with_object({}) do |word, wc|
+        wc[word] = @data.words.count(word)
       end
 
       @sentiment_word_counts = @sentiments.each_with_object({}) do |sentiment, wc|
-        wc[sentiment] =
-          @data.with_sentiment(sentiment).map(&:first).map(&:split).count
+        wc[sentiment] = @data.words(sentiment: sentiment).count
       end
       @sentiment_word_counts[:all] = @sentiment_word_counts.values.reduce(0, :+)
 

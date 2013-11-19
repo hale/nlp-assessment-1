@@ -58,9 +58,9 @@ module EmotionClassifier
 
         it "calculates #sentiment_word_counts" do
           classifier.train
-          classifier.sentiment_word_counts[:green].should eq(8)
+          classifier.sentiment_word_counts[:green].should eq(10)
           classifier.sentiment_word_counts[:red].should eq(0)
-          classifier.sentiment_word_counts[:all].should eq(8)
+          classifier.sentiment_word_counts[:all].should eq(10)
         end
 
         it "#probability with only word argument gives proportion of that word in the dataset" do
