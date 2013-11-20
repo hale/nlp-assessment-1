@@ -55,6 +55,14 @@ module EmotionClassifier
       end
     end
 
+    def word_count(word: nil, sentiment: :all)
+      if word
+        words(sentiment: sentiment).count(word)
+      else
+        words(sentiment: sentiment).count
+      end.to_f
+    end
+
     private
 
     def sentences(sentiment)

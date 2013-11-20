@@ -38,7 +38,7 @@ module EmotionClassifier
           .map(&:first).should eq(sentiments[:green])
       end
 
-      it "#with_sentiment gives the sentences with a given sentement" do
+      it "#with_sentiment gives the sentences with a given sentiment" do
         data = DataSet.new(sentiments.keys)
         data.with_sentiment(:green).map(&:first).should eq(sentiments[:green])
       end
@@ -70,7 +70,6 @@ module EmotionClassifier
         let(:data) { DataSet.new(sentiments.keys) }
         before(:each) { data.set_ngram_order(2) }
         it "#words gives an array of bigrams from all sentences" do
-          puts data.words.inspect
           data.words.count.should eq(data.words.flatten.count / 2)
         end
       end

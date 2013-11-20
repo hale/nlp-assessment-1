@@ -7,10 +7,6 @@ module EmotionClassifier
 
       let(:classifier) { Classifier.new(sentiments: [:testable]) }
 
-      it "should be untrained by default" do
-        classifier.trained?.should_not be_true
-      end
-
       it "should be initialised with some sentiments" do
         classifier = Classifier.new(sentiments: [:example])
         classifier.sentiments.should eq([:example])
@@ -32,7 +28,7 @@ module EmotionClassifier
         end
       end
 
-      describe "#train" do
+      describe "#probability" do
         let(:classifier) { Classifier.new(sentiments: [:red, :green]) }
 
         let(:sentiments) do
@@ -42,36 +38,21 @@ module EmotionClassifier
 
         before(:each) do
           File.stub(:readlines).and_return(sentiments[:red], sentiments[:green])
-        end
-
-        it "marks classifier as trained" do
-          classifier.train
-          classifier.trained?.should be_true
-        end
-
-        it "calculates #individual_word_counts" do
-          classifier.train
-          classifier.individual_word_counts['2'].should eq(2)
-          classifier.individual_word_counts['1'].should eq(1)
-          classifier.individual_word_counts['unknown'].should be_nil
-        end
-
-        it "calculates #sentiment_word_counts" do
-          classifier.train
-          classifier.sentiment_word_counts[:green].should eq(10)
-          classifier.sentiment_word_counts[:red].should eq(0)
-          classifier.sentiment_word_counts[:all].should eq(10)
+          classifier.data.use_set :train
         end
 
         it "#probability with only word argument gives proportion of that word in the dataset" do
-          classifier.train
           classifier.probability(word: '1').should eq(0.1)
         end
 
         it "#probability with word and sentiment arguments gives proportion of that word for that sentiment" do
-          classifier.train
           classifier.probability(word: '1', sentiment: :green).should eq(0.1)
           classifier.probability(word: '5', sentiment: :green).should eq(0.0)
+        end
+
+        xit "#probability works with higher order ngrams" do
+          classifier.data.set_ngram_order(3)
+          classifier.probability(word: ['1', '2']).should eq(1)
         end
       end
     end
