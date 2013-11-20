@@ -5,7 +5,11 @@ module EmotionClassifier
     end
 
     def ngrams(n)
-      @sentence.split(' ').each_cons(n).to_a
+      if @sentence.class == String
+        @sentence.split(' ').each_cons(n).to_a
+      else
+        @sentence.each_cons(n).to_a
+      end
     end
 
     def bigrams

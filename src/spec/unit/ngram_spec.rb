@@ -22,6 +22,11 @@ module EmotionClassifier
         ngram = Ngram.new("Hello, world!")
         ngram.ngrams(1).should eq([["Hello,"], ["world!"]])
       end
+
+      it "#ngrams works with arrays as well as sentences" do
+        ngram = Ngram.new(["my", "name", "is"])
+        ngram.ngrams(2).should eq([['my', 'name'], ['name', 'is']])
+      end
     end
   end
 end

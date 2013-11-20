@@ -44,8 +44,7 @@ module EmotionClassifier
       if sentiment == :all
         @individual_word_counts[word].to_f / @sentiment_word_counts[:all].to_f
       else
-        word_count = @data.with_sentiment(sentiment).map(&:first).map(&:split).flatten.count(word)
-        #puts "word count for #{word} in #{sentiment}: #{word_count}"
+        word_count = @data.words(sentiment: sentiment).count(word)
         sentiment_count = @sentiment_word_counts[sentiment].to_f
         word_count / sentiment_count
       end

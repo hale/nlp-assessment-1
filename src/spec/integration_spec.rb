@@ -13,7 +13,6 @@ module EmotionClassifier
       xit "should classify known angry-text as angry" do
         classifier = Classifier.new(:sentiments => [:angry, :fearful])
         emotion = classifier.classify(sentence: "You must")
-        #puts classifier.data.words(sentiment: :angry).group_by{|e|e}.values.sort_by(&:size).inspect
         emotion.should eq(Emotion.new(:angry))
       end
 

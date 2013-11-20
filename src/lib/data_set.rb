@@ -8,6 +8,7 @@ module EmotionClassifier
 
     attr_reader :train
     attr_reader :set
+    attr_reader :ngram_order
 
     def initialize(sentiments)
       @all = sentiments.each_with_object([]) do |sentiment, all|
@@ -19,6 +20,11 @@ module EmotionClassifier
       @train = (@all - @dev - @test)
 
       use_set(:all)
+      set_ngram_order(1)
+    end
+
+    def set_ngram_order(order)
+      @ngram_order = order
     end
 
     def use_set(set)
@@ -37,10 +43,15 @@ module EmotionClassifier
     memoize :with_sentiment
 
     def words(sentiment: :all)
-      if sentiment == :all
+      words = if sentiment == :all
         @set.map(&:first).flatten(1).map(&:split).flatten(1)
       else
         with_sentiment(sentiment).map(&:first).map(&:split).flatten
+      end
+      if @ngram_order == 1
+        words
+      else
+        Ngram.new(words).ngrams(@ngram_order)
       end
     end
 

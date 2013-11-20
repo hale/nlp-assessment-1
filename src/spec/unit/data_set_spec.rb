@@ -43,14 +43,36 @@ module EmotionClassifier
         data.with_sentiment(:green).map(&:first).should eq(sentiments[:green])
       end
 
-      it "#words gives an array with every word by default" do
+      it "uses unigrams by default" do
         data = DataSet.new(sentiments.keys)
-        data.words.should eq(sentiments.values.flatten)
+        data.ngram_order.should eq(1)
       end
 
-      it "#words with sentiment argument gives words in that sentiment" do
+      it "#set_ngram_order(3) makes the data set return trigrams" do
         data = DataSet.new(sentiments.keys)
-        data.words(sentiment: :red).should eq(sentiments[:red])
+        data.set_ngram_order(3)
+        data.ngram_order.should eq(3)
+      end
+
+      context "unigrams" do
+        it "#words gives an array with every word by default" do
+          data = DataSet.new(sentiments.keys)
+          data.words.should eq(sentiments.values.flatten)
+        end
+
+        it "#words with sentiment argument gives words in that sentiment" do
+          data = DataSet.new(sentiments.keys)
+          data.words(sentiment: :red).should eq(sentiments[:red])
+        end
+      end
+
+      context "bigrams" do
+        let(:data) { DataSet.new(sentiments.keys) }
+        before(:each) { data.set_ngram_order(2) }
+        it "#words gives an array of bigrams from all sentences" do
+          puts data.words.inspect
+          data.words.count.should eq(data.words.flatten.count / 2)
+        end
       end
     end
   end
