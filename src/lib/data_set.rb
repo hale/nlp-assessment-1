@@ -9,6 +9,7 @@ module EmotionClassifier
     attr_reader :train
     attr_reader :set
     attr_reader :ngram_order
+    attr_reader :dev
 
     def initialize(sentiments)
       @all = sentiments.each_with_object([]) do |sentiment, all|

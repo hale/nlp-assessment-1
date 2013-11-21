@@ -54,6 +54,7 @@ module EmotionClassifier
           classifier.data.set_ngram_order(3)
           classifier.probability(word: ['1', '2']).should eq(1)
         end
+
       end
     end
   end

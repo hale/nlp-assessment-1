@@ -10,16 +10,29 @@ module EmotionClassifier
         end
       end
 
-      xit "should classify known angry-text as angry" do
-        classifier = Classifier.new(:sentiments => [:angry, :fearful])
-        emotion = classifier.classify(sentence: "You must")
-        emotion.should eq(Emotion.new(:angry))
+      describe "#classify" do
+        let(:classifier) { Classifier.new(sentiments: [:angry, :fearful], report: true) }
+
+        xit "should classify known angry-text as angry" do
+          emotion = classifier.classify(sentence: "You must")
+          emotion.should eq(:angry)
+        end
+
+        it "should classify known fearful-text as fearful" do
+          emotion = classifier.classify(sentence: "Charming!")
+          emotion.should eq(:fearful)
+        end
       end
 
-      it "should classify known fearful-text as fearful" do
-        classifier = Classifier.new(:sentiments => [:angry, :fearful])
-        emotion = classifier.classify(sentence: "Charming!")
-        emotion.should eq(Emotion.new(:fearful))
+      describe "#classify_dev_set" do
+        let(:classifier) do
+          sentiments = [:angry, :disgusted, :fearful, :happy, :sad, :surprised]
+          Classifier.new(sentiments:  sentiments, report: true, )
+        end
+
+        it "doesn't crash at runtime" do
+          classifier.classify_dev_set
+        end
       end
 
       after(:each) do

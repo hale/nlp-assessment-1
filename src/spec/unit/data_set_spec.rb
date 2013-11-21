@@ -68,7 +68,9 @@ module EmotionClassifier
 
       context "bigrams" do
         let(:data) { DataSet.new(sentiments.keys) }
+
         before(:each) { data.set_ngram_order(2) }
+
         it "#words gives an array of bigrams from all sentences" do
           data.words.count.should eq(data.words.flatten.count / 2)
         end
